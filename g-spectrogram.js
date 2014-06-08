@@ -18,11 +18,16 @@ Polymer('g-spectrogram', {
     this.tempCanvas = document.createElement('canvas'),
     console.log('Created spectrogram');
     // Get input from the microphone.
-    navigator.webkitGetUserMedia({audio: true},
-                                 this.onStream.bind(this),
-                                 this.onStreamError.bind(this));
+    if (navigator.mozGetUserMedia) {
+      navigator.mozGetUserMedia({audio: true},
+                                this.onStream.bind(this),
+                                this.onStreamError.bind(this));
+    } else if (navigator.webkitGetUserMedia) {
+      navigator.webkitGetUserMedia({audio: true},
+                                this.onStream.bind(this),
+                                this.onStreamError.bind(this));
+    }
     this.ctx = this.$.canvas.getContext('2d');
-    this.labelCanvas = this.$.labels;
   },
 
   render: function() {
@@ -34,12 +39,12 @@ Polymer('g-spectrogram', {
     // Ensure dimensions are accurate.
     if (this.$.canvas.width != this.width) {
       this.$.canvas.width = this.width;
-      this.labelCanvas.width = this.width;
+      this.$.labels.width = this.width;
       didResize = true;
     }
     if (this.$.canvas.height != this.height) {
       this.$.canvas.height = this.height;
-      this.labelCanvas.height = this.height;
+      this.$.labels.height = this.height;
       didResize = true;
     }
 
@@ -133,7 +138,7 @@ Polymer('g-spectrogram', {
   },
 
   renderAxesLabels: function() {
-    var canvas = this.labelCanvas;
+    var canvas = this.$.labels;
     canvas.width = this.width;
     canvas.height = this.height;
     var ctx = canvas.getContext('2d');
@@ -173,7 +178,7 @@ Polymer('g-spectrogram', {
   },
 
   clearAxesLabels: function() {
-    var canvas = this.labelCanvas;
+    var canvas = this.$.labels;
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, this.width, this.height);
   },
