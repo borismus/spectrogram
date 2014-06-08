@@ -1,0 +1,34 @@
+<link rel="import" href="./bower_components/polymer/polymer.html">
+<link rel="import" href="./g-spectrogram-controls.html">
+<link rel="import" href="./g-oscillator.html">
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+
+<polymer-element name="g-spectrogram" attributes="controls log fftsize labels ticks oscillator speed color">
+  <template>
+  <style>
+    canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    g-spectrogram-controls {
+      position: absolute;
+    }
+  </style>
+    <canvas id="canvas"></canvas>
+    <canvas id="labels"></canvas>
+    <template if="{{controls}}">
+      <g-spectrogram-controls
+          log="{{log}}"
+          labels="{{labels}}"
+          speed="{{speed}}"
+          ticks="{{ticks}}"
+          color="{{color}}">
+      </g-spectrogram-controls>
+    </template>
+    <template if="{{oscillator}}">
+      <g-oscillator log={{log}} speed={{speed}}></g-oscillator>
+    </template>
+  </template>
+  <script src="g-spectrogram.js"></script>
+</polymer-element>

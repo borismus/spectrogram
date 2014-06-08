@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="bower_components/platform/platform.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="import" href="g-spectrogram.html">
+  </head>
+  <body>
+    <g-spectrogram controls labels log oscillator></g-spectrogram>
+
+    <script>
+var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
+context = new AudioContext();
+    </script>
+  </body>
+</html>

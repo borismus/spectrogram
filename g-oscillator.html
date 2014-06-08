@@ -1,0 +1,170 @@
+<link rel="import" href="./bower_components/polymer/polymer.html">
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+
+<polymer-element name="g-oscillator" attributes="log speed">
+  <template>
+  <style>
+    canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <canvas id="freq"></canvas>
+  </template>
+  <script>
+// Assumes context is an AudioContext defined outside of this class.
+Polymer('g-oscillator', {
+  gainAmount: 0.2,
+  history: [],
+  log: false,
+  speed: 2,
+
+  attachedCallback: function() {
+    // Listen to mouse events.
+    this.shadowRoot.addEventListener('mousedown', this.onMouseDown.bind(this));
+    this.shadowRoot.addEventListener('mouseup', this.onMouseUp.bind(this));
+    this.shadowRoot.addEventListener('mousemove', this.onMouseMove.bind(this));
+    this.shadowRoot.addEventListener('mouseout', this.onMouseOut.bind(this));
+
+    this.loop();
+  },
+
+  loop: function() {
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+
+    this.addHistory(this.lastMouseY);
+    var canvas = this.$.freq;
+    var ctx = canvas.getContext('2d');
+    canvas.width = this.width;
+    canvas.height = this.height;
+
+    var size = 6;
+    var nyquist = context.sampleRate/2;
+
+    for (var i = 0; i < this.history.length; i++) {
+      var y = this.history[i];
+      if (y === null) {
+        continue;
+      }
+      var x = this.width - (this.history.length - i - 1) * this.speed;
+      // TODO(smus): Elimiate fudge factor.
+      ctx.fillStyle = 'red';
+      ctx.fillRect(x - size/2, y - size/2, size, size);
+    }
+
+    if (this.osc_) {
+      // Label the point.
+      var label = this.formatFrequency_(this.lastFreq);
+      ctx.font = '20px Inconsolata'
+      ctx.fillText(label, this.lastMouseX, this.lastMouseY);
+    }
+    requestAnimationFrame(this.loop.bind(this));
+  },
+
+  formatFrequency_: function(freq) {
+    return Math.round(freq) + ' Hz';
+  },
+
+  onMouseDown: function(event) {
+    console.log('md');
+    if (this.osc_) {
+      // There can be only one oscillator.
+      return;
+    }
+    // Create an oscillator.
+    this.osc_ = this.createOscillator_();
+    this.updateMouse(event);
+    this.lastFreq = this.getLastFrequency();
+    this.osc_.frequency.value = this.lastFreq;
+  },
+
+  onMouseUp: function() {
+    console.log('mu');
+    if (this.osc_) {
+      this.osc_.stop(0);
+      this.osc_ = null;
+    }
+    this.updateMouse(null);
+    this.lastFreq = null;
+  },
+
+  onMouseMove: function(event) {
+    console.log('mm');
+    if (this.osc_) {
+      this.updateMouse(event);
+      this.lastFreq = this.getLastFrequency();
+      this.osc_.frequency.value = this.lastFreq;
+    }
+  },
+
+  onMouseOut : function(event) {
+    console.log('mo');
+    if (this.osc_) {
+      this.osc_.stop(0);
+      this.osc_ = null;
+    }
+    this.updateMouse(null);
+    this.lastFreq = null;
+  },
+
+  updateMouse: function(event) {
+    event = event || {};
+    this.lastMouseX = event.pageX;
+    this.lastMouseY = event.pageY;
+  },
+  
+  addHistory: function(freq) {
+    if (this.history.length > 100) {
+      this.history.splice(0, 1);
+    }
+    this.history.push(freq);
+  },
+
+  getLastFrequency: function() {
+    var x = this.lastMouseX;
+    var y = this.lastMouseY;
+
+    // Linearly divide the Y axis and assign frequency.
+    var percent = 1 - (y / this.height);
+    var nyquist = context.sampleRate/2;
+    if (this.log) {
+      percent = this.logScale_(percent * 1000, 1000) / 1000;
+    }
+    return percent * nyquist;
+  },
+
+  createOscillator_: function() {
+    // Create a gain node.
+    var gain = context.createGain();
+    gain.gain.value = this.gainAmount;
+    gain.connect(context.destination);
+
+    // Create an oscillator and connect it through the gain.
+    var osc = context.createOscillator();
+    osc.connect(gain);
+    osc.frequency.value = this.startFrequency;
+
+    // Start it.
+    osc.start(0);
+    return osc;
+  },
+
+  /**
+   * Given an index and the total number of entries, return the
+   * log-scaled value.
+   */
+  logScale_: function(index, total, opt_base) {
+    var base = opt_base || 2;
+    var logmax = this.logBase(total + 1, base);
+    var exp = logmax * index / total;
+    return Math.pow(base, exp) - 1;
+  },
+
+  logBase: function(val, base) {
+    return Math.log(val) / Math.log(base);
+  },
+});
+  </script>
+</polymer-element>
