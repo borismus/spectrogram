@@ -144,7 +144,6 @@ Polymer('g-oscillator', {
     // Create an oscillator and connect it through the gain.
     var osc = context.createOscillator();
     osc.connect(gain);
-    osc.frequency.value = this.startFrequency;
 
     // Start it.
     osc.start(0);
