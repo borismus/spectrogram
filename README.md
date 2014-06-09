@@ -1,13 +1,49 @@
-This is a live-input spectrogram written using [Polymer][polymer] and
-the [Web Audio API][wapi].
+A live-input spectrogram written using [Polymer][polymer] using the [Web
+Audio API][wapi].
 
 ![Screenshot](screenshot.png)
 
+[See it in action][demo]. Once it's running, see if you can make a
+pattern with your speech or by whistling. You can also click anywhere on
+the page to turn on the oscillator. Even cooler, [load this][aphex] in a
+parallel tab.
+
+[aphex]: https://www.youtube.com/watch?v=M9xMuPWAZW8&t=5m30s
 [polymer]: http://polymer-project.org
 [wapi]: http://webaudioapi.com
+[demo]: http://borismus.github.io/spectrogram
 
-Having a spectrogram handy is incredibly for a lot of the work I've had
-to do recently. So I built one that satisfies my needs.
+# Why?
+
+Having a spectrogram is incredibly handy for a lot of the work I've done
+recently. So a while ago, I built one that satisfies my needs. It runs
+in a full-screen, using the microphone input as the source.
+
+It also includes an oscillator, which plays a sine wave at the frequency
+of your pointer. It also shows you the frequency that it plays back, and
+plots a short buffer of pointer positions. This is handy for measuring
+internal latency:
+
+![Latency estimation](latency.png)
+
+I use the tool mostly in Chrome, but it also works in Firefox. No other
+browser currently has both `getUserMedia` and Web Audio API support.
+
+# Parameters and what they do
+
+The following are HTML attributes of the `g-spectrogram` component. Many
+of them are also configurable via the spectrogram controls component,
+which shows up if the `controls` attribute is set to true.
+
+- `controls` (boolean): shows a config UI component.
+- `log` (boolean): enables y-log scale (linear by default).
+- `speed` (number): how many pixels to move past for every frame.
+- `labels` (boolean): enables y-axis labels.
+- `ticks` (number): how many y labels to show.
+- `color` (boolean): turns on color mode (grayscale by default).
+- `oscillator` (boolean): enables an oscillator overlay component. When
+  you click anywhere in the spectrogram, a sine wave plays corresponding
+  to the frequency you click on.
 
 
 # Using the Spectrogram component
@@ -26,20 +62,19 @@ Pass parameters to the component:
     <g-spectrogram log labels ticks="10">
     </g-spectrogram>
 
-Parameters and what they do:
-
-- `controls` (boolean): shows a config component.
-- `log` (boolean): enables y-log scale (linear by default).
-- `speed` (number): how many pixels to move past for every frame.
-- `labels` (boolean): enables y-axis labels.
-- `ticks` (number): how many y labels to show.
-- `color` (boolean): turns on color mode (grayscale by default).
-- `oscillator` (boolean): enables an oscillator overlay.
 
 # Future work / features
 
-It would be great to add a few things to this spectrogram. If you're
-interested in contributing, please submit your changes as a pull
-request:
+It would be great to add a few things to this tool. If you're interested
+in contributing, submit your changes as a pull request [on
+github][github]. Some ideas for things that can be done:
 
-- Improved axis labeling
+- Improved axis labeling.
+- Make it work in mobile browsers.
+- Loading/saving of traces.
+- Loading audio data from a file.
+- Zoom support.
+- Higher precision FFT results (would require writing a custom FFT
+  rather than using the one built into Web Audio API.)
+
+[github]: https://github.com/borismus/spectrogram
