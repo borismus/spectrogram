@@ -1,28 +1,16 @@
-# Web Audio SPectrogram
-
-This is a web audio-based spectrogram written using
-[Polymer](http://polymer-project.org).
+This is a live-input spectrogram written using [Polymer][polymer] and
+the [Web Audio API][wapi].
 
 ![Screenshot](screenshot.png)
 
-Features:
+[polymer]: http://polymer-project.org
+[wapi]: http://webaudioapi.com
 
-- Toggle between logarithmic and linear scales.
-- FFT window size.
-- Frequency axis labels and ticks.
-
-TODO: 
-
-- Also allows the spectrogram to be paused and resumed.
-- Configurable color map (correlating to amplitude).
-- Load audio files.
-- Zoom into pieces of the spectrogram for more detail.
-- Detailed analysis mode that is sample accurate but not real time.
-- Custom FFT with a bigger window.
+Having a spectrogram handy is incredibly for a lot of the work I've had
+to do recently. So I built one that satisfies my needs.
 
 
-
-# The API
+# Using the Spectrogram component
 
 Simplest possible version:
 
@@ -33,14 +21,25 @@ Enable controls:
     <g-spectrogram controls>
     </g-spectrogram>
 
-Turn on log scale, enable frequency labels and show 10 ticks.
+Pass parameters to the component:
 
     <g-spectrogram log labels ticks="10">
     </g-spectrogram>
 
+Parameters and what they do:
 
-# Relevant links
+- `controls` (boolean): shows a config component.
+- `log` (boolean): enables y-log scale (linear by default).
+- `speed` (number): how many pixels to move past for every frame.
+- `labels` (boolean): enables y-axis labels.
+- `ticks` (number): how many y labels to show.
+- `color` (boolean): turns on color mode (grayscale by default).
+- `oscillator` (boolean): enables an oscillator overlay.
 
-- http://taps.cs.princeton.edu/
-- http://isse.sourceforge.net/
+# Future work / features
 
+It would be great to add a few things to this spectrogram. If you're
+interested in contributing, please submit your changes as a pull
+request:
+
+- Improved axis labeling

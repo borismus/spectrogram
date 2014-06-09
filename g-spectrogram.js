@@ -228,8 +228,8 @@ Polymer('g-spectrogram', {
   },
 
   getFullColor: function(value) {
-    var fromH = 0;
-    var toH = 62;
+    var fromH = 62;
+    var toH = 0;
     var percent = value / 255;
     var delta = percent * (toH - fromH);
     var hue = fromH + delta;

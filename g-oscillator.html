@@ -10,7 +10,13 @@
       height: 100%;
     }
   </style>
-  <canvas id="freq"></canvas>
+  <canvas id="freq" on-mousedown={{onMouseDown}}
+      on-mouseup={{onMouseUp}}
+      on-mousemove={{onMouseMove}}
+      on-mouseout={{onMouseOut}}
+      on-touchstart={{onTouchStart}}
+      on-touchend={{onTouchEnd}}
+      on-touchmove={{onTouchMove}}></canvas>
   </template>
   <script>
 // Assumes context is an AudioContext defined outside of this class.
@@ -21,12 +27,6 @@ Polymer('g-oscillator', {
   speed: 2,
 
   attachedCallback: function() {
-    // Listen to mouse events.
-    this.shadowRoot.addEventListener('mousedown', this.onMouseDown.bind(this));
-    this.shadowRoot.addEventListener('mouseup', this.onMouseUp.bind(this));
-    this.shadowRoot.addEventListener('mousemove', this.onMouseMove.bind(this));
-    this.shadowRoot.addEventListener('mouseout', this.onMouseOut.bind(this));
-
     this.loop();
   },
 
@@ -73,9 +73,9 @@ Polymer('g-oscillator', {
       // There can be only one oscillator.
       return;
     }
+    this.updatePointer(event);
     // Create an oscillator.
     this.osc_ = this.createOscillator_();
-    this.updateMouse(event);
     this.lastFreq = this.getLastFrequency();
     this.osc_.frequency.value = this.lastFreq;
   },
@@ -86,30 +86,42 @@ Polymer('g-oscillator', {
       this.osc_.stop(0);
       this.osc_ = null;
     }
-    this.updateMouse(null);
+    this.updatePointer(null);
     this.lastFreq = null;
   },
 
   onMouseMove: function(event) {
     console.log('mm');
     if (this.osc_) {
-      this.updateMouse(event);
+      this.updatePointer(event);
       this.lastFreq = this.getLastFrequency();
       this.osc_.frequency.value = this.lastFreq;
     }
   },
 
-  onMouseOut : function(event) {
+  onMouseOut: function(event) {
     console.log('mo');
     if (this.osc_) {
       this.osc_.stop(0);
       this.osc_ = null;
     }
-    this.updateMouse(null);
+    this.updatePointer(null);
     this.lastFreq = null;
   },
 
-  updateMouse: function(event) {
+  onTouchStart: function(event) {
+    console.log('ts');
+    if (this.osc_) {
+      return;
+    }
+    this.updatePointer(event);
+    // Create an oscillator.
+    this.osc_ = this.createOscillator_();
+    this.lastFreq = this.getLastFrequency();
+    this.osc_.frequency.value = this.lastFreq;
+  },
+
+  updatePointer: function(event) {
     event = event || {};
     this.lastMouseX = event.pageX;
     this.lastMouseY = event.pageY;
