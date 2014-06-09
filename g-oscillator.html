@@ -11,6 +11,10 @@
     }
   </style>
   <canvas id="freq" 
+      on-mousedown={{onMouseDown}}
+      on-mouseup={{onMouseUp}}
+      on-mousemove={{onMouseMove}}
+      on-mouseout={{onMouseOut}}
       on-touchstart={{onTouchStart}}
       on-touchend={{onTouchEnd}}
       on-touchmove={{onTouchMove}}></canvas>
@@ -31,7 +35,7 @@ Polymer('g-oscillator', {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
 
-    this.addHistory(this.lastMouseY);
+    this.addHistory(this.lastY);
     var canvas = this.$.freq;
     var ctx = canvas.getContext('2d');
     canvas.width = this.width;
@@ -55,7 +59,7 @@ Polymer('g-oscillator', {
       // Label the point.
       var label = this.formatFrequency_(this.lastFreq);
       ctx.font = '20px Inconsolata'
-      ctx.fillText(label, this.lastMouseX, this.lastMouseY);
+      ctx.fillText(label, this.lastX, this.lastY);
     }
     requestAnimationFrame(this.loop.bind(this));
   },
@@ -107,6 +111,7 @@ Polymer('g-oscillator', {
   },
 
   onTouchStart: function(event) {
+    event.preventDefault();
     console.log('ts');
     if (this.osc_) {
       return;
@@ -118,10 +123,37 @@ Polymer('g-oscillator', {
     this.osc_.frequency.value = this.lastFreq;
   },
 
+  onTouchMove: function(event) {
+    event.preventDefault();
+    console.log('tm');
+    if (this.osc_) {
+      this.updatePointer(event);
+      this.lastFreq = this.getLastFrequency();
+      this.osc_.frequency.value = this.lastFreq;
+    }
+  },
+
+  onTouchEnd: function(event) {
+    event.preventDefault();
+    console.log('te');
+    if (this.osc_) {
+      this.osc_.stop(0);
+      this.osc_ = null;
+    }
+    this.updatePointer(null);
+    this.lastFreq = null;
+  },
+
   updatePointer: function(event) {
     event = event || {};
-    this.lastMouseX = event.pageX;
-    this.lastMouseY = event.pageY;
+    var type = event.type || '';
+    if (type.indexOf('mouse') == 0) {
+      this.lastX = event.pageX;
+      this.lastY = event.pageY;
+    } else if (type.indexOf('touch') == 0) {
+      this.lastX = event.touches[0].pageX;
+      this.lastY = event.touches[0].pageY;
+    }
   },
   
   addHistory: function(freq) {
@@ -132,8 +164,8 @@ Polymer('g-oscillator', {
   },
 
   getLastFrequency: function() {
-    var x = this.lastMouseX;
-    var y = this.lastMouseY;
+    var x = this.lastX;
+    var y = this.lastY;
 
     // Linearly divide the Y axis and assign frequency.
     var percent = 1 - (y / this.height);
