@@ -83,10 +83,7 @@ Polymer('g-oscillator', {
 
   onMouseUp: function() {
     console.log('mu');
-    if (this.osc_) {
-      this.osc_.stop(0);
-      this.osc_ = null;
-    }
+    this.deleteOscillator_();
     this.updatePointer(null);
     this.lastFreq = null;
   },
@@ -102,10 +99,7 @@ Polymer('g-oscillator', {
 
   onMouseOut: function(event) {
     console.log('mo');
-    if (this.osc_) {
-      this.osc_.stop(0);
-      this.osc_ = null;
-    }
+    this.deleteOscillator_();
     this.updatePointer(null);
     this.lastFreq = null;
   },
@@ -136,11 +130,8 @@ Polymer('g-oscillator', {
   onTouchEnd: function(event) {
     event.preventDefault();
     console.log('te');
-    if (this.osc_) {
-      this.osc_.stop(0);
-      this.osc_ = null;
-    }
     this.updatePointer(null);
+    this.deleteOscillator_();
     this.lastFreq = null;
   },
 
@@ -153,6 +144,9 @@ Polymer('g-oscillator', {
     } else if (type.indexOf('touch') == 0) {
       this.lastX = event.touches[0].pageX;
       this.lastY = event.touches[0].pageY;
+    } else {
+      this.lastX = null;
+      this.lastY = null;
     }
   },
   
@@ -189,6 +183,13 @@ Polymer('g-oscillator', {
     // Start it.
     osc.start(0);
     return osc;
+  },
+
+  deleteOscillator_: function() {
+    if (this.osc_) {
+      this.osc_.stop(0);
+      this.osc_ = null;
+    }
   },
 
   /**
