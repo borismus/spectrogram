@@ -26,8 +26,21 @@ internal latency:
 
 ![Latency estimation](latency.png)
 
-I use the tool mostly in Chrome, but it also works in Firefox. No other
-browser currently has both `getUserMedia` and Web Audio API support.
+Having the oscillator built-in is also pretty fun. You can [send morse
+code][morse] (short short short, long long, short short long, short
+short short), [scan for radio stations][radio], make 8-bit character
+[dying sound effects][sfx], simulate [aliens, ghosts and
+theremins][ghosts], and annoy [small, annoying dogs][dogs].
+
+I use the tool mostly in Chrome, but it also works in Firefox.
+Unfortunately no other browser currently has both `getUserMedia` and Web
+Audio API support.
+
+[morse]: sounds/morse.wav
+[radio]: sounds/radio.wav
+[sfx]: sounds/sfx.wav
+[ghosts]: sounds/ghosts.wav
+[dogs]: sounds/dogs.wav
 
 # Parameters and what they do
 
