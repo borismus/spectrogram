@@ -2,9 +2,6 @@
 
 
 <polymer-element name="g-spectrogram-controls" attributes="log labels ticks speed color">
-  <style polymer-scope="global">
-    @import url(http://fonts.googleapis.com/css?family=Open+Sans);
-  </style>
   <template>
     <style>
       :host {
@@ -12,22 +9,23 @@
           padding: 1em;
         background: rgba(255, 255, 255, 0.5);
         margin: 1em;
-        border: rgba(0, 0, 0, 0.2);
+        border: rgba(0, 0, 0, 0.3);
         border-width: 1px;
         border-style: solid;
-        font-family: 'Open Sans', sans-serif;
+        font-family: 'Inconsolata', sans-serif;
         z-index: 10;
         }
       h1 {
-        font-size: 18px;
+        font-size: 20px;
         margin: 0;
+        margin-bottom: 20px;
       }
       .config {
         font-size: 14px;
         margin-top: 0.5em;
       }
     </style>
-    <h1>Config</h1>
+    <h1>Spectrogram Controls</h1>
     <div class="config">
       <label for="log">Log scale</label>
       <input type="checkbox" id="log" checked="{{log}}">

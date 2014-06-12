@@ -3,15 +3,17 @@ Audio API][wapi].
 
 ![Screenshot](screenshot.png)
 
-[See it in action][demo]. Once it's running, see if you can make a
-pattern with your speech or by whistling. You can also click anywhere on
-the page to turn on the oscillator. Even cooler, [load this][aphex] in a
-parallel tab.
+[See it in action][demo]. Once running, see if you can make a pattern
+with your speech or by whistling. You can also click anywhere on the
+page to turn on the oscillator. For a bit more fun, [load this][aphex]
+in a parallel tab.
 
 [aphex]: https://www.youtube.com/watch?v=M9xMuPWAZW8&t=5m30s
 [polymer]: http://polymer-project.org
 [wapi]: http://webaudioapi.com
 [demo]: http://borismus.github.io/spectrogram
+
+<!--more-->
 
 # Why?
 
@@ -42,7 +44,7 @@ Audio API support.
 [ghosts]: sounds/ghosts.wav
 [dogs]: sounds/dogs.wav
 
-# Parameters and what they do
+# Configuration parameters
 
 The following are HTML attributes of the `g-spectrogram` component. Many
 of them are also configurable via the spectrogram controls component,
@@ -59,7 +61,7 @@ which shows up if the `controls` attribute is set to true.
   to the frequency you click on.
 
 
-# Using the Spectrogram component
+# Using the Polymer component
 
 Simplest possible version:
 

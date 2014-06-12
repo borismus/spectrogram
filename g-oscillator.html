@@ -27,6 +27,8 @@ Polymer('g-oscillator', {
   log: false,
   speed: 2,
 
+  fadeTime: 0.01,
+
   attachedCallback: function() {
     this.loop();
   },
@@ -173,21 +175,27 @@ Polymer('g-oscillator', {
   createOscillator_: function() {
     // Create a gain node.
     var gain = context.createGain();
-    gain.gain.value = this.gainAmount;
+    gain.gain.value = 0;
     gain.connect(context.destination);
+    // TODO(smus): Clean this up!
+    this.gain_ = gain;
 
     // Create an oscillator and connect it through the gain.
     var osc = context.createOscillator();
     osc.connect(gain);
 
-    // Start it.
+    // Start it with a fade-in.
+    gain.gain.linearRampToValueAtTime(this.gainAmount,
+        context.currentTime + this.fadeTime);
     osc.start(0);
     return osc;
   },
 
   deleteOscillator_: function() {
     if (this.osc_) {
-      this.osc_.stop(0);
+      var endTime = context.currentTime + this.fadeTime;
+      this.gain_.gain.linearRampToValueAtTime(0, endTime);
+      this.osc_.stop(endTime);
       this.osc_ = null;
     }
   },

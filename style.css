@@ -2,3 +2,18 @@ body, html {
   margin: 0;
   padding: 0;
 }
+
+#about {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  font-family: 'Inconsolata';
+}
+
+#instructions {
+  margin: 0 auto;
+  padding-top: 100px;
+  width: 500px;
+  font-family: 'Inconsolata';
+  font-size: 120%;
+}
