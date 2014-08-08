@@ -23,7 +23,10 @@ Polymer('g-spectrogram', {
                                 this.onStream.bind(this),
                                 this.onStreamError.bind(this));
     } else if (navigator.webkitGetUserMedia) {
-      navigator.webkitGetUserMedia({audio: true},
+      var constraints = {
+        audio: { optional: [{ echoCancellation: false }] }
+      };
+      navigator.webkitGetUserMedia(constraints,
                                 this.onStream.bind(this),
                                 this.onStreamError.bind(this));
     }
