@@ -15,10 +15,15 @@ Polymer('g-spectrogram', {
   color: false,
 
   attachedCallback: function() {
-    this.tempCanvas = document.createElement('canvas'),
+    this.tempCanvas = document.createElement('canvas'); 
     console.log('Created spectrogram');
     // Get input from the microphone.
-    if (navigator.mozGetUserMedia) {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia({audio: true})
+        .then(this.onStream.bind(this))
+        .catch(this.onStreamError.bind(this))
+    } else if (navigator.mozGetUserMedia) {
       navigator.mozGetUserMedia({audio: true},
                                 this.onStream.bind(this),
                                 this.onStreamError.bind(this));
@@ -27,6 +32,7 @@ Polymer('g-spectrogram', {
                                 this.onStream.bind(this),
                                 this.onStreamError.bind(this));
     }
+
     this.ctx = this.$.canvas.getContext('2d');
   },
 
