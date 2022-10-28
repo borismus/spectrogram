@@ -1,5 +1,3 @@
-// Assumes context is an AudioContext defined outside of this class.
-
 Polymer('g-spectrogram', {
   // Show the controls UI.
   controls: false,
@@ -14,20 +12,28 @@ Polymer('g-spectrogram', {
   oscillator: false,
   color: false,
 
-  attachedCallback: function() {
+  attachedCallback: async function() {
     this.tempCanvas = document.createElement('canvas'),
     console.log('Created spectrogram');
-    // Get input from the microphone.
-    if (navigator.mozGetUserMedia) {
-      navigator.mozGetUserMedia({audio: true},
-                                this.onStream.bind(this),
-                                this.onStreamError.bind(this));
-    } else if (navigator.webkitGetUserMedia) {
-      navigator.webkitGetUserMedia({audio: true},
-                                this.onStream.bind(this),
-                                this.onStreamError.bind(this));
+
+    // Require user gesture before creating audio context, etc.
+    window.addEventListener('mousedown', () => this.createAudioGraph());
+    window.addEventListener('touchstart', () => this.createAudioGraph());
+  },
+
+  createAudioGraph: async function() {
+    if (this.audioContext) {
+      return;
     }
-    this.ctx = this.$.canvas.getContext('2d');
+    // Get input from the microphone.
+    this.audioContext = new AudioContext();
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+      this.ctx = this.$.canvas.getContext('2d');
+      this.onStream(stream);
+    } catch (e) {
+      this.onStreamError(e);
+    }
   },
 
   render: function() {
@@ -80,8 +86,12 @@ Polymer('g-spectrogram', {
   },
 
   renderFreqDomain: function() {
-    var freq = new Uint8Array(this.analyser.frequencyBinCount);
-    this.analyser.getByteFrequencyData(freq);
+    this.analyser.getByteFrequencyData(this.freq);
+
+    // Check if we're getting lots of zeros.
+    if (this.freq[0] === 0) {
+      //console.warn(`Looks like zeros...`);
+    }
 
     var ctx = this.ctx;
     // Copy the current canvas onto the temp canvas.
@@ -92,19 +102,19 @@ Polymer('g-spectrogram', {
     tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
 
     // Iterate over the frequencies.
-    for (var i = 0; i < freq.length; i++) {
+    for (var i = 0; i < this.freq.length; i++) {
       var value;
       // Draw each pixel with the specific color.
       if (this.log) {
-        logIndex = this.logScale(i, freq.length);
-        value = freq[logIndex];
+        logIndex = this.logScale(i, this.freq.length);
+        value = this.freq[logIndex];
       } else {
-        value = freq[i];
+        value = this.freq[i];
       }
 
       ctx.fillStyle = (this.color ? this.getFullColor(value) : this.getGrayColor(value));
 
-      var percent = i / freq.length;
+      var percent = i / this.freq.length;
       var y = Math.round(percent * this.height);
 
       // draw the line at the right side of the canvas
@@ -138,12 +148,15 @@ Polymer('g-spectrogram', {
   },
 
   renderAxesLabels: function() {
+    if (!this.audioContext) {
+      return;
+    }
     var canvas = this.$.labels;
     canvas.width = this.width;
     canvas.height = this.height;
     var ctx = canvas.getContext('2d');
     var startFreq = 440;
-    var nyquist = context.sampleRate/2;
+    var nyquist = this.audioContext.sampleRate/2;
     var endFreq = nyquist - startFreq;
     var step = (endFreq - startFreq) / this.ticks;
     var yLabelOffset = 5;
@@ -192,12 +205,12 @@ Polymer('g-spectrogram', {
   },
 
   indexToFreq: function(index) {
-    var nyquist = context.sampleRate/2;
+    var nyquist = this.audioContext.sampleRate/2;
     return nyquist/this.getFFTBinCount() * index;
   },
 
   freqToIndex: function(frequency) {
-    var nyquist = context.sampleRate/2;
+    var nyquist = this.audioContext.sampleRate/2;
     return Math.round(frequency/nyquist * this.getFFTBinCount());
   },
 
@@ -206,8 +219,8 @@ Polymer('g-spectrogram', {
   },
 
   onStream: function(stream) {
-    var input = context.createMediaStreamSource(stream);
-    var analyser = context.createAnalyser();
+    var input = this.audioContext.createMediaStreamSource(stream);
+    var analyser = this.audioContext.createAnalyser();
     analyser.smoothingTimeConstant = 0;
     analyser.fftSize = this.fftsize;
 
@@ -215,6 +228,8 @@ Polymer('g-spectrogram', {
     input.connect(analyser);
 
     this.analyser = analyser;
+    this.freq = new Uint8Array(this.analyser.frequencyBinCount);
+
     // Setup a timer to visualize some stuff.
     this.render();
   },

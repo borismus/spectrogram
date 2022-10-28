@@ -20,7 +20,6 @@
       on-touchmove={{onTouchMove}}></canvas>
   </template>
   <script>
-// Assumes context is an AudioContext defined outside of this class.
 Polymer('g-oscillator', {
   gainAmount: 0.2,
   history: [],
@@ -30,6 +29,7 @@ Polymer('g-oscillator', {
   fadeTime: 0.01,
 
   attachedCallback: function() {
+    this.audioContext = new AudioContext();
     this.loop();
   },
 
@@ -44,7 +44,7 @@ Polymer('g-oscillator', {
     canvas.height = this.height;
 
     var size = 6;
-    var nyquist = context.sampleRate/2;
+    var nyquist = this.audioContext.sampleRate/2;
 
     for (var i = 0; i < this.history.length; i++) {
       var y = this.history[i];
@@ -144,7 +144,7 @@ Polymer('g-oscillator', {
       this.lastY = null;
     }
   },
-  
+
   addHistory: function(freq) {
     if (this.history.length > 100) {
       this.history.splice(0, 1);
@@ -158,7 +158,7 @@ Polymer('g-oscillator', {
 
     // Linearly divide the Y axis and assign frequency.
     var percent = 1 - (y / this.height);
-    var nyquist = context.sampleRate/2;
+    var nyquist = this.audioContext.sampleRate/2;
     if (this.log) {
       percent = this.logScale_(percent * 1000, 1000) / 1000;
     }
@@ -167,26 +167,26 @@ Polymer('g-oscillator', {
 
   createOscillator_: function() {
     // Create a gain node.
-    var gain = context.createGain();
+    var gain = this.audioContext.createGain();
     gain.gain.value = 0;
-    gain.connect(context.destination);
+    gain.connect(this.audioContext.destination);
     // TODO(smus): Clean this up!
     this.gain_ = gain;
 
     // Create an oscillator and connect it through the gain.
-    var osc = context.createOscillator();
+    var osc = this.audioContext.createOscillator();
     osc.connect(gain);
 
     // Start it with a fade-in.
     gain.gain.linearRampToValueAtTime(this.gainAmount,
-        context.currentTime + this.fadeTime);
+        this.audioContext.currentTime + this.fadeTime);
     osc.start(0);
     return osc;
   },
 
   deleteOscillator_: function() {
     if (this.osc_) {
-      var endTime = context.currentTime + this.fadeTime;
+      var endTime = this.audioContext.currentTime + this.fadeTime;
       this.gain_.gain.linearRampToValueAtTime(0, endTime);
       this.osc_.stop(endTime);
       this.osc_ = null;
