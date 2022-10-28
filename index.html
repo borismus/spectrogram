@@ -24,7 +24,16 @@
 
     <script>
 var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
-context = new AudioContext();
+window.context = new AudioContext();
+window.addEventListener('mousedown', resumeAudioContext);
+window.addEventListener('touchstart', resumeAudioContext);
+
+async function resumeAudioContext() {
+  if (context.state === 'suspended') {
+    await context.resume();
+    console.log(`AudioContext resumed.`);
+  }
+}
     </script>
 
     <script>

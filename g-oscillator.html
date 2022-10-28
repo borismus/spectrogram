@@ -71,7 +71,6 @@ Polymer('g-oscillator', {
   },
 
   onMouseDown: function(event) {
-    console.log('md');
     if (this.osc_) {
       // There can be only one oscillator.
       return;
@@ -84,14 +83,12 @@ Polymer('g-oscillator', {
   },
 
   onMouseUp: function() {
-    console.log('mu');
     this.deleteOscillator_();
     this.updatePointer(null);
     this.lastFreq = null;
   },
 
   onMouseMove: function(event) {
-    console.log('mm');
     if (this.osc_) {
       this.updatePointer(event);
       this.lastFreq = this.getLastFrequency();
@@ -100,7 +97,6 @@ Polymer('g-oscillator', {
   },
 
   onMouseOut: function(event) {
-    console.log('mo');
     this.deleteOscillator_();
     this.updatePointer(null);
     this.lastFreq = null;
@@ -108,7 +104,6 @@ Polymer('g-oscillator', {
 
   onTouchStart: function(event) {
     event.preventDefault();
-    console.log('ts');
     if (this.osc_) {
       return;
     }
@@ -121,7 +116,6 @@ Polymer('g-oscillator', {
 
   onTouchMove: function(event) {
     event.preventDefault();
-    console.log('tm');
     if (this.osc_) {
       this.updatePointer(event);
       this.lastFreq = this.getLastFrequency();
@@ -131,7 +125,6 @@ Polymer('g-oscillator', {
 
   onTouchEnd: function(event) {
     event.preventDefault();
-    console.log('te');
     this.updatePointer(null);
     this.deleteOscillator_();
     this.lastFreq = null;
