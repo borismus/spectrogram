@@ -29,6 +29,7 @@ Polymer('g-spectrogram', {
     this.audioContext = new AudioContext();
     try {
       const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+
       this.ctx = this.$.canvas.getContext('2d');
       this.onStream(stream);
     } catch (e) {
@@ -243,14 +244,10 @@ Polymer('g-spectrogram', {
   },
 
   getFullColor: function(value) {
-    var fromH = 62;
-    var toH = 0;
-    var percent = value / 255;
-    var delta = percent * (toH - fromH);
-    var hue = fromH + delta;
-    return 'hsl(H, 100%, 50%)'.replace(/H/g, hue);
+    // TODO - we can use other colormaps here as well
+    return d3.interpolateViridis(value / 255)
   },
-  
+
   logChanged: function() {
     if (this.labels) {
       this.renderAxesLabels();
