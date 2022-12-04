@@ -4,14 +4,17 @@
 <polymer-element name="g-spectrogram-controls" attributes="log labels ticks speed color">
   <template>
     <style>
+      summary {list-style: none}
+      summary::-webkit-details-marker {display: none; }
+      details summary::before {
+        content:"o";
+        color: lightgray;
+        /* you can style it however you want, use background-image for example */
+      }
       :host {
         display: block;
           padding: 1em;
-        background: rgba(255, 255, 255, 0.5);
         margin: 1em;
-        border: rgba(0, 0, 0, 0.3);
-        border-width: 1px;
-        border-style: solid;
         font-family: 'Inconsolata', sans-serif;
         z-index: 10;
         }
@@ -25,29 +28,31 @@
         margin-top: 0.5em;
       }
     </style>
-    <h1>Spectrogram Controls</h1>
-    <div class="config">
-      <label for="log">Log scale</label>
-      <input type="checkbox" id="log" checked="{{log}}">
-    </div>
-    <div class="config">
-      <label for="color">Full color</label>
-      <input type="checkbox" id="color" checked="{{color}}">
-    </div>
-    <div class="config">
-      <label for="speed">Speed</label>
-      <input type="range" id="speed" value="{{speed}}" min="1" max="5" />
-    </div>
-    <div class="config">
-    <label for="labels">Show labels</label>
-    <input type="checkbox" id="labels" checked="{{labels}}">
-    </div>
-    <template if="{{labels}}">
-      <div class="config">
-      <label for="ticks">Number of ticks</label>
-      <input type="range" id="ticks" value="{{ticks}}" min="2" max="10" />
-      </div>
-    </template>
-    </template>
+    <details><summary></summary>
+      <h1>Spectrogram Controls</h1>
+        <div class="config">
+          <label for="log">Log scale</label>
+          <input type="checkbox" id="log" checked="{{log}}">
+        </div>
+        <div class="config">
+          <label for="color">Full color</label>
+          <input type="checkbox" id="color" checked="{{color}}">
+        </div>
+        <div class="config">
+          <label for="speed">Speed</label>
+          <input type="range" id="speed" value="{{speed}}" min="1" max="5" />
+        </div>
+        <div class="config">
+        <label for="labels">Show labels</label>
+        <input type="checkbox" id="labels" checked="{{labels}}">
+        </div>
+        <template if="{{labels}}">
+          <div class="config">
+          <label for="ticks">Number of ticks</label>
+          <input type="range" id="ticks" value="{{ticks}}" min="2" max="10" />
+          </div>
+        </template>
+        </template>
+    </details>
   <script src="g-spectrogram-controls.js"></script>
 </polymer-element>
