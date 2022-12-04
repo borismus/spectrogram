@@ -1,3 +1,20 @@
+
+# Introduction
+
+All acknowledgements to @borismus, this is a slighty adjusted version to
+apply this for a small 'live' project.
+
+To run this on a local PC, start a server in the same folder:
+
+```
+python -m http.server 8001
+```
+
+and go to http://localhost:8001/ in your browser (NOT 0.0.0.0:8001, as this will interpreted as unsecure by the browser and won't activate the Microphoine plugin).
+
+
+# Introduction
+
 A live-input spectrogram written using [Polymer][polymer] using the [Web
 Audio API][wapi].
 
